@@ -52,6 +52,7 @@ for ax in (ax0, ax1, ax2):
     ax.get_yaxis().tick_left()
 
 plt.tight_layout()
+#plt.show()
 
 # We need the activation of our fuzzy membership functions at these values.
 # The exact values 30 and 7 do not exist on our universes...
@@ -101,6 +102,7 @@ for ax in (ax0,):
     ax.get_yaxis().tick_left()
 
 plt.tight_layout()
+#plt.show()
 
 # Aggregate all four output membership functions together
 # By using Mninmum Inference Engine (M.I.E)
@@ -132,4 +134,5 @@ for ax in (ax0,):
     ax.get_yaxis().tick_left()
 
 plt.tight_layout()
+#plt.show()
 print("The water temperature is " + str(water_temp) + " ℃")
