@@ -92,6 +92,28 @@ def License_plate_recognition(image):
 path = r"D:\desktop_D\Python\python\OpenCV"
  
 for i in range(1, 11):   
-    image = cv2.imread(path + "\{}.jpg".format(i))
-    License_plate_recognition(image)
-    cv2.imwrite(path + "\label_{}.jpg".format(i), hmerge)
+    image_1 = cv2.imread(path + "\picture_origin\{}.jpg".format(i))
+#    image_2 = cv2.imread(path + "\picture_origin\\far_{}.jpg".format(i))
+
+    License_plate_recognition(image_1)
+#    License_plate_recognition(image_2)
+
+    cv2.imwrite(path + "\picture_process\label_{}.jpg".format(i), hmerge)
+    
+    
+    
+    
+    
+for i in range(1, 11):   
+#    image_1 = cv2.imread(path + "\picture_origin\{}.jpg".format(i))
+    image_2 = cv2.imread(path + "\picture_origin\\far_{}.jpg".format(i))
+
+#    License_plate_recognition(image_1)
+    License_plate_recognition(image_2)
+
+    cv2.imwrite(path + "\picture_process\label_far_{}.jpg".format(i), hmerge)
+    
+    
+    
+    
+    
