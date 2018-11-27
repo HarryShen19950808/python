@@ -9,9 +9,12 @@ import cv2
 import numpy as np
 from skimage import measure
 
-# 第一種：灰階--->邊緣偵測--->二值化--->中值濾波--->膨脹侵蝕--->取標籤
+# =============================================================================
+# #車牌辨識ver2.0
+# =============================================================================
+# 第一種：灰階 ---> 邊緣偵測 ---> 二值化 ---> 中值濾波 ---> 膨脹侵蝕 ---> 取標籤
 
-path = r"D:\desktop_D\ImageProcessing\python_opencv\License plate recognition"
+path = r"D:\desktop_D\Python\python\OpenCV\License plate recognition"
 
 def img_show(name, image):
     cv2.imshow(name, image)
@@ -122,19 +125,46 @@ for i in range(1, 11):
             numPixels = cv2.countNonZero(labelMask)
             
             #如果像素數目大於3000認定為車牌字母或數字
-            if numPixels >= 7000:
+            if numPixels >= 9000:
                 #放到剛剛建立的空圖中
                 mask = cv2.add(mask, labelMask)
 #    img_show("mask", mask)
+    
+    # 將過濾出來的標籤圖儲存
     cv2.imwrite(path + "\label\\far\label_far{}.jpg".format(i), mask)
-
-for i in range(1, 11):
+    
+    # 讀取原圖與標籤圖
     image_far = cv2.imread(path + "\origin\\far\\far_{}.jpg".format(i))
     image_label = cv2.imread(path + "\label\\far\label_far{}.jpg".format(i))
+    
+    # 做疊圖並儲存
     img_add = addImage(image_far, image_label)
     img_show('img_add', img_add)
     cv2.imwrite(path + "\label\\add\label_add{}.jpg".format(i), img_add)
     
+    # 取AND並儲存
     bitwiseAnd = cv2.bitwise_and(image_far, image_label)
     img_show("And", bitwiseAnd)
     cv2.imwrite(path + "\label\AND\label_AND{}.jpg".format(i), bitwiseAnd)
+    
+    # 取輪廓
+    img,contours,hierarchy = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # 計算面積
+    cnt = contours[0]
+    area = cv2.contourArea(cnt)
+    print(area)
+    clone = bitwiseAnd.copy()
+    # 畫輪廓
+    cv2.drawContours(clone, contours, -1, (0, 0, 255), 2)
+    img_show("area", clone)
+    
+    for c in contours:        
+        mask_1 = np.zeros(mask.shape, dtype="uint8")  #依Contours圖形建立mask
+        cv2.drawContours(mask_1, [c], -1, 255, -1) #255        →白色, -1→塗滿
+        # show the images
+        cv2.imshow("Image", mask)
+        cv2.imshow("Mask", mask_1)
+    #將mask與原圖形作AND運算
+    cv2.imshow("Image + Mask", cv2.bitwise_and(mask, mask, mask=mask_1))  
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
