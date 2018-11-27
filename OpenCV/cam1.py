@@ -11,13 +11,13 @@ import cv2
 #cv2.imshow("Image", gray_img)
 #cv2.waitKey(0)
 #cv2.destroyWindow("Image")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 if not cap.isOpened():
 	raise IOError("CANNOT OPEN CAM")
 while True:
 	ret, frame = cap.read()
-	frame = cv2.resize(frame, None, fx = 0.5, fy = 0.5, interpolation = cv2.INTER_AREA)
+	frame = cv2.resize(frame, None, fx = 1.5, fy = 1.5, interpolation = cv2.INTER_AREA)
 
 	cv2.imshow("Input", frame)
 	c = cv2.waitKey(1)

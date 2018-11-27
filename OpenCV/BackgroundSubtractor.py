@@ -8,11 +8,12 @@ Created on Sat Nov  3 01:43:13 2018
 import cv2
 import numpy as np
 
-camera = cv2.VideoCapture(0) # 参数0表示第一个摄像头
+camera = cv2.VideoCapture(1) # 参数0表示第一个摄像头
 bs = cv2.createBackgroundSubtractorKNN(detectShadows=True)
 es = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
 while True:
     grabbed, frame_lwpCV = camera.read()
+    frame_lwpCV = cv2.resize(frame_lwpCV, None, fx = 1.5, fy = 1.5, interpolation = cv2.INTER_AREA)
     fgmask = bs.apply(frame_lwpCV) # 背景分割器，该函数计算了前景掩码
     # 二值化阈值处理，前景掩码含有前景的白色值以及阴影的灰色值，在阈值化图像中，将非纯白色（244~255）的所有像素都设为0，而不是255
     th = cv2.threshold(fgmask.copy(), 244, 255, cv2.THRESH_BINARY)[1]
