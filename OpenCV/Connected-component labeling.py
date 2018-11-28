@@ -7,9 +7,8 @@ Created on Mon Nov 19 11:44:19 2018
 # =============================================================================
 # #車牌辨識ver1.0
 # =============================================================================
-#下方的步驟中, 我們使用skimage提供的Adaptive threshold而非OpenCV
+
 from skimage.filters import threshold_adaptive
-#Connected-component labeling相關功能就放在skimage的子模組measure
 from skimage import measure
 import numpy as np
 import cv2
