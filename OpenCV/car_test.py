@@ -38,6 +38,8 @@ for i in range(1, 11):
     h = image_far.shape[0]
     w = image_far.shape[1]
     gray = np.empty((h, w), np.uint8)
+    thresh = np.empty((h, w), np.uint8)
+    plate = np.empty((h, w), np.uint8)
     # 分離出R、G、B的分量
     (B,G,R) = cv2.split(image_far)
 #    img_show("origin", image_far)
@@ -58,8 +60,19 @@ for i in range(1, 11):
 #    img_show("edge", edge)
     
     # 二值化
-    ret, thresh = cv2.threshold(edge, 127, 255, cv2.THRESH_BINARY)
+#    ret, thresh1 = cv2.threshold(edge, 127, 255, cv2.THRESH_BINARY)
+    for j in range(0, h):
+        for k in range(0, w):
+            if edge[j][k] < 127:
+                edge[j][k] = 0
+                thresh[j][k] = edge[j][k]
+            else:
+                edge[j][k] = 255
+                thresh[j][k] = edge[j][k]
+#    a = thresh - thresh1
 #    img_show("binary", thresh)
+#    img_show("binary1", thresh1)
+#    img_show("a", a)
 #    
     # 第一種：中值濾波
     blurred = cv2.medianBlur(thresh, 3)
@@ -119,7 +132,7 @@ for i in range(1, 11):
             #有幾個非0的像素?
             numPixels = cv2.countNonZero(labelMask)
             
-            #如果像素數目大於3000認定為車牌字母或數字
+            #如果像素數目大於9000認定為車牌字母或數字
             if numPixels >= 9000:
                 #放到剛剛建立的空圖中
                 mask = cv2.add(mask, labelMask)
@@ -155,7 +168,9 @@ for i in range(1, 11):
 #        cv2.drawContours(clone, [c], -1, (0, 0, 255), 2)
         # 畫矩形外框
         (x, y, w, h) = cv2.boundingRect(c)
+        print(w, h) # 方框的長與寬
         cv2.rectangle(clone, (x, y), (x + w, y + h), (252, 197, 5), 2)
+        plate = clone[x:x + w, y:y + h]
         # 印出數字標籤
         cv2.putText(clone, "#%d"%cnt, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (252, 197, 5), 3)
                     
@@ -166,7 +181,10 @@ for i in range(1, 11):
         # 水平拼接
         hmerge = np.hstack((mask, mask_1, AND_mask))
         img_show("Image & Mask & Mask_Area", hmerge)
-        img_show("License plate", clone)
+        img_show("plate", plate)
+        # 車牌的長寬比約為0.9 ~ 3之間
+        if (w / h) >= 0.9 and (w / h) <= 3:
+            img_show("License plate", clone)
 #        cv2.imwrite(path + "\label\\area\label_area_%d_#%d.jpg"%(i, cnt), clone)
-        cv2.imwrite(path + "\label\\bound\plate_%d_#%d.jpg"%(i, cnt), clone)
+            cv2.imwrite(path + "\label\\bound\plate_%d_#%d.jpg"%(i, cnt), clone)
         cnt += 1

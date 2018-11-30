@@ -32,7 +32,7 @@ def img_show(name, image):
 #        cv2.imwrite(path + "\\thresh_R.jpg", hmerge) # 目前用手動調整，非迴圈
 #        cv2.destroyAllWindows()
     
-path = "D:\desktop_D\ImageProcessing\python_opencv\License plate recognition\origin\\far"
+path = "D:\desktop_D\Python\python\OpenCV\License plate recognition\origin\\far"
 #image_label = cv2.imread(path + "\label\\far\label_far{}.jpg".format(i)) 
 img = cv2.imread(path + '\\far_{}.jpg'.format(1))
 h = img.shape[0]
@@ -47,11 +47,18 @@ R = gray[:, :]
 G = gray[:, :]
 B = gray[:, :]
 
+for i in range(0, h):
+    for j in range(0, w):
+        if gray[i][j] < 127:
+            gray[i][j] = 0
+            thresh[i][j] = gray[i][j]
+        else:
+            gray[i][j] = 255
+            thresh[i][j] = gray[i][j]
 
-if gray[:h, :w] < 127:
-    thresh[:h, :w] = 0 * int(bool(gray[:h, :w]))
-else:
-    thresh[:h, :w] = 255 * int(bool(gray[:h, :w]))
-    
+ret, thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+a = thresh - thresh1   
 #diff_thresh(img_R)
-img_show("thresh", gray)
+img_show("thresh", thresh)
+img_show("thresh", thresh1)
+img_show("a", a)
