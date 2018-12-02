@@ -186,7 +186,7 @@ for i in range(1, 11):
         # 印出數字標籤
         cv2.putText(clone, "#%d"%cnt, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (223, 199, 22), 3)
                     
-        #將mask與原圖形作AND運算
+        #將mask與灰階圖取AND
         AND_mask = cv2.bitwise_and(mask, mask, mask=mask_1)
         AND_mask = cv2.bitwise_and(AND_mask, gray)
         
