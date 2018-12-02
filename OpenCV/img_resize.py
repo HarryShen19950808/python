@@ -6,7 +6,7 @@ Created on Mon Nov 19 10:35:53 2018
 """
 
 import cv2
-import os
+#import os
 import matplotlib.pyplot as plt
 
 

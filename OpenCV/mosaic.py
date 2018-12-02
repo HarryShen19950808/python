@@ -13,10 +13,6 @@ def salt(img, img2, n):
     noff = int((n - 1) / 2)
     for i in range(noff,img.shape[0]-noff,noff):
         for j in range(noff,img.shape[1]-noff,noff):
-            # img.shape[0] -- 取得img 的列（图片的高）
-            # img.shape[1] -- 取得img 的行（图片的宽）
-            # i = int(np.random.random() * img.shape[1]);
-            # j = int(np.random.random() * img.shape[0]);
 
             (b, g, r) = img[i, j]
             #b = img[j, i, 0]
@@ -36,7 +32,7 @@ path = r"D:\desktop_D\Python\python\OpenCV\License plate recognition"
 image_far = cv2.imread(path + "\origin\\far\\far_{}.jpg".format(2))
 #img = cv2.imread("100900.jpg")
 img2 = image_far.copy()
-saltImage = salt(image_far, img2, 17)
+saltImage = salt(image_far, img2, 40)
 
 cv2.imshow("Salt", saltImage)
 cv2.waitKey(0)
