@@ -16,8 +16,8 @@ def diff(f, x):
 
 # 宇集合區間
 x_start = -3
-x_end = 3.1
-x = np.arange(x_start, x_end, 0.3)
+x_end = 3.
+x = np.arange(x_start, x_end, 0.001)
 
 # 函數微分取max，再與epsilon相除
 dg = diff(np.cos, x)
@@ -26,8 +26,10 @@ h1 = epsilon / np.around(max(dg))
 
 # fuzzy set個數
 cnt = int((x_end - x_start) / h1) + 1
+# fuzzy set
 A = {}
-list_A = []
+
+# fuzzy set最大值對應到的橫軸值
 e = []
 
 for i in range(1, cnt + 1):
@@ -36,11 +38,11 @@ for i in range(1, cnt + 1):
         e.append(-3)
     elif i > 1 and i < 21:
         A["{%d}"%i] = fuzz.trimf(x, [-3 + 0.3*(i - 2), -3 + 0.3*(i - 1), -3 + 0.3*i])
-        e.append(-3 + 0.3*(i - 1))
+        e.append(np.around(-3 + 0.3*(i - 1), decimals = 3))
     elif i == 21:
         A["{%d}"%i] = fuzz.trimf(x, [2.7, 3, 3])
         e.append(3)
+        e = np.array(e).reshape(cnt, -1)
     plt.plot(x, A["{%d}"%i])
-    
-sum_A = (i - 1) * ((0.6 * 1)/2)
+#    for
 
