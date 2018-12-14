@@ -44,57 +44,59 @@ def trimf(x, abc):
 
     idx = np.nonzero(x == b)
     y[idx] = 1
-    return y 
+    return y
 
 # 建立fuzzy set的個數
-def fuzzy_set(x, x_start, x_end, cnt, epsilon):
-    global e
-    for i in range(1, cnt+1):
-        if i == 1:
-            A["{%d}"%i] = trimf(x, [x_start, x_start, -3 + epsilon*(i)])
-            e.append(-3)
-        elif i > 1 and i < cnt:
-            A["{%d}"%i] = trimf(x, [-3 + epsilon*(i - 2), -3 + epsilon*(i - 1), -3 + epsilon*i])
-            e.append(-3 + epsilon*(i - 1))
+def fuzzy_set(x, x_start, x_end, cnt, epsilon, A, e, h1):
+    for i in range(cnt):
+        if i == 0:
+            A[i, :, :] = trimf(x, [x_start, x_start, x_start + h1]).reshape(-1, 1)
+            e.append(x_start)
+        elif i > 0 and i < cnt:
+            A[i, :, :] = trimf(x, [x_start + (h1 * (i - 1)), x_start + (h1 * i), x_start + (h1 * (i + 1))]).reshape(-1, 1)
+            e.append(x_start + (h1 * i))
         elif i == cnt:
-            A["{%d}"%i] = trimf(x, [-3 + epsilon*(i - 2), x_end, x_end])
-            e.append(3)
-            e = np.array(e).reshape(cnt, -1)
-    return A, e
+            A[i, :, :] = trimf(x, [x_start + (h1 * (i - 2)), x_end, x_end]).reshape(-1, 1)
+            e.append(x_end)
+
 # 微分
 def diff(f, x):
     h = 1e-4
     return (f(x + h) - f(x - h)) / (2 * h)
 
+
+# 目標函數
 def g(x):
     return np.cos(x)
+
+
 # 定義宇集合區間與epsilon
 epsilon = 0.3 # 
 x_start = -3
-x_end = 3.000001
-x = np.arange(x_start, x_end, epsilon)
-x_for_g = np.arange(x_start, x_end, 0.01)
+x_end = 3
+x = np.linspace(x_start, x_end, 1000)
 
-# 函數微分取max，再與epsilon相除
+# g(x)微分取sup，並計算出h1
 dg = diff(g, x)
 h1 = epsilon / np.around(max(dg))
 
-# 利用h計算fuzzy set個數
-cnt = int((x_end - x_start) / h1) + 1
-# fuzzy set
-A = {}
+# 計算fuzzy set個數
+cnt = int(((x_end - x_start) / h1) + 1)
 
-# 收集fuzzy set中值
+# 計算fuzzy set
+A = np.empty((cnt, int(len(x)), 1))
 e = []
 
-fuzzy_set(x, x_start, x_end, cnt, epsilon)
-for i in range(1, cnt+1):
+fuzzy_set(x, x_start, x_end, cnt, epsilon, A, e, h1)
+
+for k in range(cnt):
     plt.figure(1)
-    plt.plot(x, A["{%d}"%i])
-    f = (g(e) * A["{%d}"%i]) / A["{%d}"%i]
+    plt.plot(x, A[k])
+    for j in range(1, len(x)):
+        f = (g(e) * A[k][j]) / (A[k][j])
 
 plt.figure(2)
-plt.plot(x_for_g, g(x_for_g), label = "g(x)")
-plt.plot(x, f, label = "f(x)")
+plt.plot(e, f, label = "f(x)")
+plt.plot(e, g(e), label = "g(x)")
 plt.legend()
 plt.show()
