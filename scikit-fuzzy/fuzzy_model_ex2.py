@@ -48,16 +48,16 @@ def trimf(x, abc):
     return y
 
 # 建立fuzzy set的個數
-def fuzzy_set(x, x_start, x_end, cnt, epsilon, A, e, h1):
+def fuzzy_set(x, x_start, x_end, cnt, epsilon, A, e, h):
     for i in range(cnt):
         if i == 0:
-            A[i, :, :] = trimf(x, [x_start, x_start, x_start + h1]).reshape(-1, 1)
+            A[i, :, :] = trimf(x, [x_start, x_start, x_start + h]).reshape(-1, 1)
             e.append(x_start)
         elif i > 0 and i < cnt:
-            A[i, :, :] = trimf(x, [x_start + (h1 * (i - 1)), x_start + (h1 * i), x_start + (h1 * (i + 1))]).reshape(-1, 1)
-            e.append(x_start + (h1 * i))
+            A[i, :, :] = trimf(x, [x_start + (h * (i - 1)), x_start + (h * i), x_start + (h * (i + 1))]).reshape(-1, 1)
+            e.append(x_start + (h * i))
         elif i == cnt:
-            A[i, :, :] = trimf(x, [x_start + (h1 * (i - 2)), x_end, x_end]).reshape(-1, 1)
+            A[i, :, :] = trimf(x, [x_start + (h * (i - 2)), x_end, x_end]).reshape(-1, 1)
             e.append(x_end)
 
 # =============================================================================
@@ -116,7 +116,6 @@ f = []
 for i in range(len(A1)):
     for j in range(len(A2)):
         f.append(sum(g_function(e1[i], e2[j]) * A1[j] * A2[j]) / sum(A1[j] * A2[j]))
-f = np.array(f).reshape(11, 11)
 #
 fig = plt.figure(2)
 ax = Axes3D(fig)
@@ -125,17 +124,19 @@ x2 = np.linspace(x_start, x_end, 100)
 x1, x2 = np.meshgrid(x1, x2)
 g = 0.51 + 0.2 * x1 + 0.28 * x2 - 0.05 * x1 * x2
 
-
-ax.plot_surface(x1, x2, g, rstride=1, cstride=1, cmap='rainbow') # 这里传入x, y, z的值
+plt.title("g(x) = 0.51 + 0.2 * x1 + 0.28 * x2 - 0.05 * x1 * x2")
+ax.plot_surface(x1, x2, g, rstride=1, cstride=1, cmap='rainbow') # 傳入x, y, z的值
 ax.set_xlabel('x1')
 ax.set_ylabel('x2')
-ax.set_zlabel("g(x) = 0.51 + 0.2 * x1 + 0.28 * x2 - 0.05 * x1 * x2")
+ax.set_zlabel("g(x)")
 plt.show()
 #
 fig = plt.figure(3)
 ax = Axes3D(fig)
 e1, e2 = np.meshgrid(e1, e2)
-ax.plot_surface(e1, e2, f, rstride=1, cstride=1, cmap='rainbow') # 这里传入x, y, z的值
+f = np.array(f).reshape(11, 11).T
+plt.title("simulation f(x)")
+ax.plot_surface(e1, e2, f, rstride=1, cstride=1, cmap='rainbow') # 傳入x, y, z的值
 ax.set_xlabel('x1')
 ax.set_ylabel('x2')
 ax.set_zlabel("f(x)")

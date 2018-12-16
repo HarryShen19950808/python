@@ -97,7 +97,6 @@ for k in range(cnt):
         f = (g_function(e) * A[k][j]) / (A[k][j])
 
 plt.figure(2)
-plt.title("g(x) & f(x)")
 plt.plot(e, f, label = "f(x)")
 plt.plot(x, g, label = "g(x)")
 plt.legend()
