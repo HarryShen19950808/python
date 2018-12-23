@@ -10,23 +10,29 @@ import cv2
 
 camera = cv2.VideoCapture(0) # 参数0表示第一个摄像头
 bs = cv2.createBackgroundSubtractorKNN(detectShadows=True)
-es = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+es = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 7))
+es_1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
+
 while True:
     grabbed, frame_lwpCV = camera.read()
     frame_lwpCV = cv2.resize(frame_lwpCV, None, fx = 1.5, fy = 1.5, interpolation = cv2.INTER_AREA)
     fgmask = bs.apply(frame_lwpCV) # 背景分割器，该函数计算了前景掩码
-    # 二值化阈值处理，前景掩码含有前景的白色值以及阴影的灰色值，在阈值化图像中，将非纯白色（244~255）的所有像素都设为0，而不是255
-    th = cv2.threshold(fgmask, 244, 255, cv2.THRESH_BINARY)[1]
-    # 下面就跟基本运动检测中方法相同，识别目标，检测轮廓，在原始帧上绘制检测结果
-    dilated = cv2.dilate(th, es, iterations=2) # 形态学膨胀
+
+    th = cv2.threshold(fgmask, 240, 255, cv2.THRESH_BINARY)[1]
+    blurred = cv2.medianBlur(th, 3)
+    
+    dilated = cv2.dilate(blurred, es_1, iterations=4) 
+    erode = cv2.erode(dilated, es, iterations=1)
+    
     image, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # 该函数计算一幅图像中目标的轮廓
     for c in contours:
-        if cv2.contourArea(c) > 1600:
+        if cv2.contourArea(c) > 30000:
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(frame_lwpCV, (x, y), (x + w, y + h), (255, 255, 0), 2)
+            cv2.putText(frame_lwpCV, "object", (y, x), cv2.FONT_HERSHEY_SIMPLEX, 1, (223, 199, 22), 2)
 
-    cv2.imshow('mog', fgmask)
-    cv2.imshow('thresh', th)
+    cv2.imshow('blurred', blurred)
+    cv2.imshow('dilated', dilated)
     cv2.imshow('detection', frame_lwpCV)
     key = cv2.waitKey(1) & 0xFF
     # 按'q'健退出循环

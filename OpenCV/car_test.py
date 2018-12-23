@@ -33,12 +33,14 @@ def addImage(img1, img2):
     return img_add
 
 def salt(img, img2, n):
-    noff = int((n - 1) / 2)
-    for i in range(noff,img.shape[0]-noff,noff):
-        for j in range(noff,img.shape[1]-noff,noff):
+    noff = int((n - 1) / 2) # 設定馬賽克 1 pixel 的大小
+    for i in range(noff,img.shape[0]-noff,noff): # 垂直長度，每 1 pixel前進一步
+        for j in range(noff,img.shape[1]-noff,noff): # 水平長度，每 1 pixel前進一步
+            # 將新 pixel 位置指派給RGB
             (b, g, r) = img[i, j]
             for m in range(-noff,  noff):
                 for n in range(-noff, noff):
+                    # 指派新色階給RGB
                     img[i+m, j+n, 0] = b
                     img[i + m, j + n, 1] = g
                     img[i + m, j + n, 2] = r
@@ -129,7 +131,7 @@ for i in range(1, 11):
     #建立一個空的圖，存放篩選出的輪廓
     mask = np.zeros(erosion.shape, dtype="uint8")
     #顯示總共有幾塊白色輪廓
-    print("Total {} blobs".format(len(np.unique(labels))))
+    print("\nTotal {} blobs".format(len(np.unique(labels))))
     #依序編號每個白色輪廓
     for (j, label) in enumerate(np.unique(labels)):
             #如果label = 0，表示它為背景
@@ -143,10 +145,10 @@ for i in range(1, 11):
             labelMask = np.zeros(thresh.shape, dtype="uint8")
             labelMask[labels == label] = 255
             
-            #有幾個非0的像素?
+            #有幾個非0的pixel？
             numPixels = cv2.countNonZero(labelMask)
             
-            #如果像素數目大於9000認定為車牌字母或數字
+            #如果pixel數目大於9000判斷可能為車牌
             if numPixels >= 9000:
                 #放到剛剛建立的空圖中
                 mask = cv2.add(mask, labelMask)

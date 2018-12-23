@@ -11,7 +11,7 @@ import cv2
 #cv2.imshow("Image", gray_img)
 #cv2.waitKey(0)
 #cv2.destroyWindow("Image")
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 if not cap.isOpened():
 	raise IOError("CANNOT OPEN CAM")
