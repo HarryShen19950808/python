@@ -1,3 +1,4 @@
-* Item1
-  * Item1
-  * Item2
+# Fuzzy homework from NCU
+
+## Reference
+1. https://github.com/scikit-fuzzy/scikit-fuzzy
